@@ -4,18 +4,19 @@ import pandas as pd
 import pathlib
 
 class QuotesSpider(scrapy.Spider):
-    name="quotes"
+    name="author"
 
-    def start_requests(self):
-        urls=["http://quotes.toscrape.com/page/1/", "http://quotes.toscrape.com/page/2/"]
+    start_urls=["http://quotes.toscrape.com/"]
 
-        for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+    def parse_author(self, response):
+        def extract_with_css(query):
+            return response.css(query).extract_first().strip()
 
+        yield {("name"):(extract_with_css("h3.author-title::text"))}
 
     def parse(self, response):
-        for quote in response.css("div.quote"):
-            yield {("text"):(quote.css("span.text::text").extract_first())}
+        for href in response.css(".author + a::attr(href)"):
+            yield response.follow(href, self.parse_author)
 
         for href in response.css("li.next a::attr(href)"):
             yield response.follow(href, callback=self.parse)

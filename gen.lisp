@@ -14,15 +14,19 @@
 		   (pd pandas)
 		   pathlib))
 	 (class QuotesSpider (scrapy.Spider)
-		(setf name (string "quotes"))
-		(def start_requests (self)
-		 (setf urls (list  (string "http://quotes.toscrape.com/page/1/")
-				   (string "http://quotes.toscrape.com/page/2/")))
-		 (for (url urls)
-		      (yield (scrapy.Request :url url :callback
-					       self.parse))))
+		(setf name (string "author"))
+		(setf start_urls (list (string "http://quotes.toscrape.com/")))
+
+		(def parse_author (self response)
+		  (def extract_with_css (query)
+		    (return (dot (response.css query)
+				 (extract_first)
+				 (strip))))
+		  (yield (dict ((string "name") (extract_with_css (string "h3.author-title::text"))))))
 		(def parse (self response)
-		  (for (quote (response.css (string "div.quote")))
+		  (for (href (response.css (string ".author + a::attr(href)")))
+		       (yield (response.follow href self.parse_author)))
+		  #+nil (for (quote (response.css (string "div.quote")))
 		       (yield
 			(dict ((string text) (dot (quote.css (string
 							      "span.text::text"))
