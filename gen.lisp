@@ -19,13 +19,19 @@
 		 (setf urls (list  (string "http://quotes.toscrape.com/page/1/")
 				   (string "http://quotes.toscrape.com/page/2/")))
 		 (for (url urls)
-		      ("yield scrapy.Request" :url url :callback
-					      self.parse)))
+		      (yield (scrapy.Request :url url :callback
+					       self.parse))))
 		(def parse (self response)
 		  (for (quote (response.css (string "div.quote")))
 		       (yield
 			(dict ((string text) (dot (quote.css (string
 							      "span.text::text"))
-						  (extract_first))))))))
+						  (extract_first))))))
+		  (setf next_page (dot (response.css (string "li.next a::attr(href)"))
+				       (extract_first)))
+		  (if "next_page is not None"
+		      (do0
+		       (setf next_page (response.urljoin next_page))
+		       (yield (scrapy.Request next_page :callback self.parse))))))
 	 )))
   (write-source "/home/martin/stage/py_scrape_leb/source/tutorial/tutorial/spiders/quotes_spider" code))
