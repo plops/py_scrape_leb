@@ -30,8 +30,6 @@
 		  (setf next_page (dot (response.css (string "li.next a::attr(href)"))
 				       (extract_first)))
 		  (if "next_page is not None"
-		      (do0
-		       (setf next_page (response.urljoin next_page))
-		       (yield (scrapy.Request next_page :callback self.parse))))))
+		      (yield (response.follow next_page :callback self.parse)))))
 	 )))
   (write-source "/home/martin/stage/py_scrape_leb/source/tutorial/tutorial/spiders/quotes_spider" code))
