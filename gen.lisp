@@ -23,9 +23,9 @@
 					      self.parse)))
 		(def parse (self response)
 		  (for (quote (response.css (string "div.quote")))
-		       "yield"
-		       (dict ((string text) (dot (quote.css (string
-							     "span.text::text"))
-						 (extract_first)))))))
+		       (yield
+			(dict ((string text) (dot (quote.css (string
+							      "span.text::text"))
+						  (extract_first))))))))
 	 )))
   (write-source "/home/martin/stage/py_scrape_leb/source/tutorial/tutorial/spiders/quotes_spider" code))
