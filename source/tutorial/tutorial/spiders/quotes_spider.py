@@ -15,11 +15,11 @@ class QuotesSpider(scrapy.Spider):
 
     def parse(self, response):
         page=response.url.split("/")[-2]
-        fn="/dev/shm/quotes-{}.html".page
-        f=open(fn, wb)
+        fn="/dev/shm/quotes-{}.html".format(page)
+        f=open(fn, "wb")
 
         f.write(response.body)
         f.close()
-        self.log("saved file {}.".fn)
+        self.log("saved file {}.".format(fn))
 
 
