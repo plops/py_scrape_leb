@@ -27,9 +27,7 @@
 			(dict ((string text) (dot (quote.css (string
 							      "span.text::text"))
 						  (extract_first))))))
-		  (setf next_page (dot (response.css (string "li.next a::attr(href)"))
-				       (extract_first)))
-		  (if "next_page is not None"
-		      (yield (response.follow next_page :callback self.parse)))))
+		  (for (href (response.css (string "li.next a::attr(href)")))
+		      (yield (response.follow href :callback self.parse)))))
 	 )))
   (write-source "/home/martin/stage/py_scrape_leb/source/tutorial/tutorial/spiders/quotes_spider" code))

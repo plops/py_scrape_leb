@@ -17,10 +17,8 @@ class QuotesSpider(scrapy.Spider):
         for quote in response.css("div.quote"):
             yield {("text"):(quote.css("span.text::text").extract_first())}
 
-        next_page=response.css("li.next a::attr(href)").extract_first()
-
-        if ( next_page is not None ):
-            yield response.follow(next_page, callback=self.parse)
+        for href in response.css("li.next a::attr(href)"):
+            yield response.follow(href, callback=self.parse)
 
 
 
